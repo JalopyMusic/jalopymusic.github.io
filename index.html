@@ -1,0 +1,91 @@
+<audio id="player"></audio>
+
+<div id="titles">
+  <div id="title-prev" class="clickable faded small">–</div>
+  <div id="title-current" class="clickable bold large">–</div>
+  <div id="title-next" class="clickable faded small">–</div>
+</div>
+
+<style>
+  #titles {
+    display: flex;
+    gap: 1em;
+    justify-content: center;
+    margin-bottom: 1em;
+  }
+  .clickable {
+    cursor: pointer;
+  }
+  .faded {
+    color: #888;
+  }
+  .small {
+    font-size: 0.9em;
+  }
+  .bold {
+    font-weight: bold;
+  }
+  .large {
+    font-size: 1.2em;
+  }
+</style>
+
+<script>
+  const tracks = [
+    'Gift from the Cosmos',
+    'Hello Honey',
+    'Riesel Diesel',
+    'Right My Song',
+    'Snowin on Raton',
+  ];
+
+  function shuffle(a) {
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+  }
+
+  shuffle(tracks);
+  let currentIndex = 0;
+
+  const player = document.getElementById('player');
+  const btnToggle = document.getElementById('toggle');
+  const titlePrev = document.getElementById('title-prev');
+  const titleCurr = document.getElementById('title-current');
+  const titleNext = document.getElementById('title-next');
+
+  const prevIndex = () => (currentIndex - 1 + tracks.length) % tracks.length;
+  const nextIndex = () => (currentIndex + 1) % tracks.length;
+
+  function loadTrack() {
+    player.src = 'songs/' + tracks[currentIndex] + '.mp3';
+    titlePrev.textContent = tracks[prevIndex()];
+    titleCurr.textContent = tracks[currentIndex];
+    titleNext.textContent = tracks[nextIndex()];
+  }
+
+  titlePrev.onclick = () => {
+    currentIndex = prevIndex();
+    loadTrack();
+    player.play();
+  };
+
+  titleNext.onclick = () => {
+    currentIndex = nextIndex();
+    loadTrack();
+    player.play();
+  };
+
+  titleCurr.onclick = () => {
+    player.paused ? player.play() : player.pause();
+  };
+
+  player.onended = () => {
+    currentIndex = nextIndex();
+    loadTrack();
+    player.play();
+  };
+
+  loadTrack();
+</script>
